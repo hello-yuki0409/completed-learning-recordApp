@@ -39,13 +39,13 @@ export const LearningForm = ({
           学習時間
           <input
             type="number"
-            value={Number.isNaN(time) ? "" : time}
+            value={Number.isNaN(time) ? "" : time} // NaN のときだけ空文字にして placeholder 表示
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const value = e.target.value;
-              setTime(value === "" ? NaN : parseFloat(value)); // <- 空ならNaN、数字なら数値に
+              setTime(value === "" ? NaN : parseFloat(value)); // 空欄なら NaN、数字なら数値に
             }}
             min="0"
-            step="0.1"
+            step="1"
             placeholder="半角数字で入力"
             style={{ fontSize: "16px" }}
           />
