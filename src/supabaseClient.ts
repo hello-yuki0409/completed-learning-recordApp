@@ -1,7 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 
-// vite-env.d.ts で VITE_* を string 型として宣言している
-export const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+const url = import.meta.env.VITE_SUPABASE_URL;
+const anon = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!url || !anon) {
+  // どちらが欠けてるかもログに出す
+  console.error("Missing Supabase env", {
+    VITE_SUPABASE_URL: !!url,
+    VITE_SUPABASE_ANON_KEY: !!anon,
+  });
+  throw new Error(
+    "Missing Supabase env (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)"
+  );
+}
+
+export const supabase = createClient(url, anon);
