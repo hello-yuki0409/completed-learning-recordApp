@@ -1,5 +1,21 @@
 import React from "react";
-export const HistoryList = ({ history, onClickDelete }) => {
+
+export type HistoryRecord = {
+  id: string | number;
+  records: string;
+  time: number;
+  remark?: string;
+};
+
+export type HistoryListProps = {
+  history: HistoryRecord[];
+  onClickDelete: (id: HistoryRecord["id"]) => void;
+};
+
+export const HistoryList: React.FC<HistoryListProps> = ({
+  history,
+  onClickDelete,
+}) => {
   return (
     <div>
       <h2>登録履歴</h2>

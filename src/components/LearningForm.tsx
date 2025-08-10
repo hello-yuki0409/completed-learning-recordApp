@@ -1,8 +1,22 @@
-import React from "react";
-export const LearningForm = (props) => {
-  const { records, setRecords, time, setTime, remark, setRemark, onClickAdd } =
-    props;
+export type LearningFormProps = {
+  records: string;
+  setRecords: (value: string) => void;
+  time: number;
+  setTime: (value: number) => void;
+  remark: string;
+  setRemark: (value: string) => void;
+  onClickAdd: React.MouseEventHandler<HTMLButtonElement>;
+};
 
+export const LearningForm = ({
+  records,
+  setRecords,
+  time,
+  setTime,
+  remark,
+  setRemark,
+  onClickAdd,
+}: LearningFormProps) => {
   return (
     <form>
       <h1 data-testid="title">学習時間記録</h1>
@@ -12,7 +26,9 @@ export const LearningForm = (props) => {
           <input
             type="text"
             value={records}
-            onChange={(e) => setRecords(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setRecords(e.target.value)
+            }
             placeholder="学習内容"
             style={{ fontSize: "16px" }}
           />
@@ -23,8 +39,11 @@ export const LearningForm = (props) => {
           学習時間
           <input
             type="number"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+            value={Number.isNaN(time) ? "" : time}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const value = e.target.value;
+              setTime(value === "" ? NaN : parseFloat(value)); // <- 空ならNaN、数字なら数値に
+            }}
             min="0"
             step="0.1"
             placeholder="半角数字で入力"
@@ -38,7 +57,9 @@ export const LearningForm = (props) => {
           <input
             type="text"
             value={remark}
-            onChange={(e) => setRemark(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setRemark(e.target.value)
+            }
             placeholder="備考メモ"
             style={{ fontSize: "16px" }}
           />

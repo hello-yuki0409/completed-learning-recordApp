@@ -1,14 +1,22 @@
-import React from "react";
-export const LearningDetails = (props) => {
-  const {
-    records,
-    time,
-    remark,
-    error,
-    totalStudyTime,
-    currentGoal,
-    baseGoal,
-  } = props;
+export type LearningDetailsProps = {
+  records: string;
+  time: number;
+  remark?: string;
+  error?: string;
+  totalStudyTime: number;
+  currentGoal: number;
+  baseGoal: number;
+};
+
+export const LearningDetails = ({
+  records,
+  time,
+  remark,
+  error,
+  totalStudyTime,
+  currentGoal,
+  baseGoal,
+}: LearningDetailsProps) => {
   return (
     <div>
       <div>

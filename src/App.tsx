@@ -1,24 +1,24 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import { LearningForm } from "./components/LearningForm";
-import { HistoryList } from "./components/HistoryList";
+import { HistoryList, type HistoryRecord } from "./components/HistoryList";
 import { LearningDetails } from "./components/LearningDetails";
 import { getAllHistory, addHistory, deleteHistory } from "./supabaseFunction";
-import "./App.css";
 
-export function App() {
-  const [records, setRecords] = useState("");
-  const [time, setTime] = useState("");
-  const [error, setError] = useState("");
-  const [remark, setRemark] = useState("");
-  const [todos, setTodos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); //データ読み込み中かどうか
+export default function App() {
+  const [records, setRecords] = useState<string>("");
+  const [time, setTime] = useState<number>(NaN);
+  const [error, setError] = useState<string>("");
+  const [remark, setRemark] = useState<string>("");
+
+  const [historyRecords, setHistoryRecordss] = useState<HistoryRecord[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true); //データ読み込み中かどうか
 
   const fetchTodos = async () => {
     setIsLoading(true); // 読み込み開始時
-    const todos = await getAllHistory();
-    setTodos(todos);
-    setIsLoading(false); // 読み込み完了時
+    // getAllHistory の戻り値が型定義されていない場合に備えて as で明示
+    const items = (await getAllHistory()) as HistoryRecord[];
+    setHistoryRecordss(items);
+    setIsLoading(false); // 読み込み完了で Loading 消す
   };
 
   // useEffectの外でも fetchTodos を使えるようにする
@@ -27,9 +27,9 @@ export function App() {
   }, []);
 
   // recordsかtimeが空欄でボタン押されたら表示する
-  const onClickAdd = async (event) => {
+  const onClickAdd = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (records === "" || time === "") {
+    if (!records.trim() || Number.isNaN(time)) {
       setError("入力されていない項目があります。");
       return;
     }
@@ -40,7 +40,7 @@ export function App() {
     if (result !== undefined) {
       await fetchTodos(); // その場で再取得して即時反映させる
       setRecords("");
-      setTime("");
+      setTime(NaN); // フォームクリア時は未入力状態（NaN）に戻す
       setRemark("");
       setError("");
     } else {
@@ -50,9 +50,11 @@ export function App() {
   };
 
   // 登録後の削除処理を追加
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: HistoryRecord["id"]) => {
     setIsLoading(true);
+    // Supabase の削除関数を呼び出し、該当IDのデータを削除
     const result = await deleteHistory(id);
+    // 削除が成功したら最新の履歴データを再取得して画面を更新する
     if (result) {
       await fetchTodos();
     }
@@ -60,7 +62,7 @@ export function App() {
   };
 
   // 学習時間を合計する処理
-  const totalStudyTime = todos.reduce(
+  const totalStudyTime = historyRecords.reduce(
     (sum, records) => sum + Number(records.time),
     0
   );
@@ -73,7 +75,7 @@ export function App() {
       ? 0
       : Math.floor((totalStudyTime - baseGoal) / plusGoal) + 1;
 
-  // 次の目標時間 ~勉強に終わりはない、産まれてから死ぬまで勉強~
+  // 次の目標時間 ~勉強に終わりはない 産まれてから死ぬまで勉強~
   const currentGoal = baseGoal + goalCount * plusGoal;
 
   // Loading画面を表示する処理
@@ -121,7 +123,7 @@ export function App() {
         />
       </div>
       <div className="card">
-        <HistoryList history={todos} onClickDelete={handleDelete} />
+        <HistoryList history={historyRecords} onClickDelete={handleDelete} />
       </div>
     </div>
   );
