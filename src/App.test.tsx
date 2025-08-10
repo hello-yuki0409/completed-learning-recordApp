@@ -27,7 +27,6 @@ test("ロード表示が出てから消え、履歴が表示される", async ()
   await waitForElementToBeRemoved(() => screen.getByText(/now loading/i));
 
   // 以降はポストロードのアサーション
-  // UIに合わせて文言を調整してください
   await waitFor(() => {
     expect(screen.getByText(/勉強A/)).toBeInTheDocument();
   });
