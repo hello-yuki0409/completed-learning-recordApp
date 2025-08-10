@@ -1,0 +1,62 @@
+name: CI/CD
+
+on:
+  push: # すべての push で実行
+    branches: ["**"]
+  pull_request: # すべての PR で実行
+    branches: ["**"]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    concurrency: # 同じブランチで前ジョブが走っていたらキャンセル
+      group: ${{ github.workflow }}-${{ github.ref }}-buildtest
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci # lockfile 前提のクリーンインストール
+
+      - name: Test
+        run: npm test -- --ci # Jest をCIモードで
+
+      - name: Build
+        run: npm run build # Vite で dist/ を生成
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist # 後続ジョブで取り出す成果物名
+          path: dist
+          if-no-files-found: error
+
+  # main へ push されたときだけ本番デプロイ
+  deploy:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-deploy
+      cancel-in-progress: true
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist
+
+      - name: Deploy to Firebase Hosting (live)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }} # PRへのコメント等に使用
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: completed-learning-recordapp # 明示。省略可（.firebaserc使用）
+          channelId: live # 本番公開
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks # オプション
