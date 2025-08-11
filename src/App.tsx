@@ -100,8 +100,8 @@ export default function App() {
   }
 
   return (
-    <div className="app-container">
-      <div className="card">
+    <Container maxW="container.lg" py={8} bg="leaf.50">
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
         <LearningForm
           records={records}
           setRecords={setRecords}
@@ -111,8 +111,6 @@ export default function App() {
           setRemark={setRemark}
           onClickAdd={onClickAdd}
         />
-      </div>
-      <div className="card">
         <LearningDetails
           records={records}
           time={time}
@@ -122,10 +120,8 @@ export default function App() {
           currentGoal={currentGoal}
           baseGoal={baseGoal}
         />
-      </div>
-      <div className="card">
         <HistoryList history={historyRecords} onClickDelete={handleDelete} />
-      </div>
-    </div>
+      </SimpleGrid>
+    </Container>
   );
 }
