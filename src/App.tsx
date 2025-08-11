@@ -1,3 +1,12 @@
+import {
+  Container,
+  SimpleGrid,
+  Stack,
+  Center,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+
 import { useState, useEffect, type MouseEvent } from "react";
 import { LearningForm } from "./components/LearningForm";
 import { HistoryList, type HistoryRecord } from "./components/HistoryList";
@@ -81,20 +90,12 @@ export default function App() {
   // Loading画面を表示する処理
   if (isLoading) {
     return (
-      <div
-        style={{
-          background: "#333",
-          color: "#fff",
-          minHeight: "100vh",
-          padding: "2em",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "2rem",
-        }}
-      >
-        Now Loading...
-      </div>
+      <Center minH="100vh" bg="leaf.50">
+        <Stack align="center" spacing={3}>
+          <Spinner thickness="3px" color="leaf.500" size="lg" />
+          <Text color="leaf.700">Now Loading...</Text>
+        </Stack>
+      </Center>
     );
   }
 

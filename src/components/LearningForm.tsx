@@ -1,3 +1,16 @@
+import { type ChangeEvent } from "react";
+import {
+  Box,
+  Heading,
+  Stack,
+  FormControl,
+  FormLabel,
+  Input,
+  NumberInput,
+  NumberInputField,
+  Button,
+} from "@chakra-ui/react";
+
 export type LearningFormProps = {
   records: string;
   setRecords: (value: string) => void;
@@ -18,65 +31,58 @@ export const LearningForm = ({
   onClickAdd,
 }: LearningFormProps) => {
   return (
-    <form>
-      <h1 data-testid="title">学習時間記録</h1>
-      <div>
-        <label>
-          学習内容
-          <input
-            type="text"
+    <Box
+      bg="white"
+      p={6}
+      rounded="2xl"
+      boxShadow="sm"
+      border="1px"
+      borderColor="blackAlpha.100"
+    >
+      <Heading size="md" mb={4} color="leaf.700">
+        学習時間記録
+      </Heading>
+      <Stack spacing={5}>
+        <FormControl>
+          <FormLabel>学習内容</FormLabel>
+          <Input
             value={records}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            placeholder="学習内容"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setRecords(e.target.value)
             }
-            placeholder="学習内容"
-            style={{ fontSize: "16px" }}
           />
-        </label>
-      </div>
-      <div>
-        <label>
-          学習時間
-          <input
-            type="number"
-            value={Number.isNaN(time) ? "" : time} // NaN のときだけ空文字にして placeholder 表示
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = e.target.value;
-              setTime(value === "" ? NaN : parseFloat(value)); // 空欄なら NaN、数字なら数値に
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>学習時間（時間）</FormLabel>
+          <NumberInput
+            min={0}
+            clampValueOnBlur={false}
+            value={Number.isNaN(time) ? "" : String(time)}
+            onChange={(valueString, valueNumber) => {
+              setTime(valueString === "" ? NaN : valueNumber);
             }}
-            min="0"
-            step="1"
-            placeholder="半角数字で入力"
-            style={{ fontSize: "16px" }}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          備考
-          <input
-            type="text"
+          >
+            <NumberInputField placeholder="半角数字で入力" />
+          </NumberInput>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>備考</FormLabel>
+          <Input
             value={remark}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            placeholder="備考メモ"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setRemark(e.target.value)
             }
-            placeholder="備考メモ"
-            style={{ fontSize: "16px" }}
           />
-        </label>
-      </div>
-      <button
-        onClick={onClickAdd}
-        style={{
-          color: "#333",
-          border: "none",
-          borderRadius: "0.3em",
-          padding: "0.2em 0.6em",
-          cursor: "pointer",
-        }}
-      >
-        登録
-      </button>
-    </form>
+        </FormControl>
+
+        <Button onClick={onClickAdd} alignSelf="flex-start">
+          登録
+        </Button>
+      </Stack>
+    </Box>
   );
 };

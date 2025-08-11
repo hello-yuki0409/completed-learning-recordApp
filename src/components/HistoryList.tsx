@@ -1,3 +1,12 @@
+import {
+  Box,
+  Heading,
+  List,
+  ListItem,
+  HStack,
+  Text,
+  Button,
+} from "@chakra-ui/react";
 import React from "react";
 
 export type HistoryRecord = {
@@ -17,33 +26,37 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   onClickDelete,
 }) => {
   return (
-    <div>
-      <h2>登録履歴</h2>
-      <ul>
+    <Box
+      bg="white"
+      p={6}
+      rounded="2xl"
+      boxShadow="sm"
+      border="1px"
+      borderColor="blackAlpha.100"
+    >
+      <Heading size="md" mb={4} color="leaf.700">
+        登録履歴
+      </Heading>
+      <List spacing={3}>
         {history.map((record) => (
-          <li
-            key={record.id}
-            data-testid="history-item"
-            style={{ marginBottom: "0.5em" }}
-          >
-            学習内容: {record.records}
-            学習時間: {record.time} 時間 備考： {record.remark}
-            <button
-              onClick={() => onClickDelete(record.id)}
-              style={{
-                marginLeft: "1em",
-                color: "#333",
-                border: "none",
-                borderRadius: "0.3em",
-                padding: "0.2em 0.6em",
-                cursor: "pointer",
-              }}
-            >
-              削除
-            </button>
-          </li>
+          <ListItem key={record.id}>
+            <HStack justify="space-between" align="center">
+              <Text fontSize="sm">
+                学習内容: {record.records}　学習時間: {record.time} 時間　備考:{" "}
+                {record.remark ?? "—"}
+              </Text>
+              <Button
+                variant="outline"
+                colorScheme="red"
+                size="sm"
+                onClick={() => onClickDelete(record.id)}
+              >
+                削除
+              </Button>
+            </HStack>
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 };

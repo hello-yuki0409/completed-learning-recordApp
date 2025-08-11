@@ -1,3 +1,5 @@
+import { Box, Heading, Text, Stack, Badge } from "@chakra-ui/react";
+
 export type LearningDetailsProps = {
   records: string;
   time: number;
@@ -19,29 +21,41 @@ export const LearningDetails = ({
 }: LearningDetailsProps) => {
   // 表示用に整形（NaNは未入力として扱う）
   const displayTime = Number.isNaN(time) ? "" : String(time);
-  const displayRemark = remark ?? "";
 
   return (
-    <div>
-      <div>
-        <p>入力されている学習内容: {records || ""}</p>
-        <p>入力されている時間: {displayTime ? `${displayTime} 時間` : ""}</p>
-        <p>備考：{displayRemark}</p>
+    <Box
+      bg="white"
+      p={6}
+      rounded="2xl"
+      boxShadow="sm"
+      border="1px"
+      borderColor="blackAlpha.100"
+    >
+      <Heading size="md" mb={4} color="leaf.700">
+        入力内容プレビュー
+      </Heading>
+      <Stack spacing={2} fontSize="sm">
+        <Text>入力されている学習内容：{records || "—"}</Text>
+        <Text>
+          入力されている時間：{displayTime ? `${displayTime} 時間` : "—"}
+        </Text>
+        <Text>備考：{remark ?? "—"}</Text>
+        {error && <Text color="red.500">{error}</Text>}
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <p>
-          合計学習時間：{totalStudyTime} / {currentGoal} 時間
-        </p>
+        <Text mt={2}>
+          合計学習時間：
+          <Badge colorScheme="leaf" px={2} py={1} rounded="md">
+            {totalStudyTime}
+          </Badge>{" "}
+          / {currentGoal} 時間
+        </Text>
 
         {totalStudyTime >= baseGoal && (
-          <p>
-            <span style={{ color: "green", marginLeft: 10 }}>
-              よし！次の目標は {currentGoal} 時間だ🔥 (定量目標)
-            </span>
-          </p>
+          <Text color="leaf.700" mt={1}>
+            よし！次の目標は {currentGoal} 時間だ🔥（定量目標）
+          </Text>
         )}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 };
