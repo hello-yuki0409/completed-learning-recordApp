@@ -19,6 +19,7 @@ export type LearningFormProps = {
   remark: string;
   setRemark: (value: string) => void;
   onClickAdd: React.MouseEventHandler<HTMLButtonElement>;
+  hideSubmit?: boolean; // 追加: モーダル側にボタンを出すためのフラグ
 };
 
 export const LearningForm = ({
@@ -29,6 +30,7 @@ export const LearningForm = ({
   remark,
   setRemark,
   onClickAdd,
+  hideSubmit, // 追加
 }: LearningFormProps) => {
   return (
     <Box
@@ -79,9 +81,11 @@ export const LearningForm = ({
           />
         </FormControl>
 
-        <Button onClick={onClickAdd} alignSelf="flex-start">
-          登録
-        </Button>
+        {!hideSubmit && ( // 追加: 単体表示時のみボタンを出す（モーダルでは非表示）
+          <Button onClick={onClickAdd} alignSelf="flex-start">
+            登録
+          </Button>
+        )}
       </Stack>
     </Box>
   );
