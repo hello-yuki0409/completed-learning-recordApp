@@ -43,7 +43,7 @@ export const LearningDetails = ({
           合計学習時間：
           <Badge colorScheme="leaf" px={2} py={1} rounded="md">
             {totalStudyTime}
-          </Badge>{" "}
+          </Badge>
           / {currentGoal} 時間
         </Text>
 

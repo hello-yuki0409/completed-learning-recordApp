@@ -128,7 +128,6 @@ export default function App() {
     <Container maxW="container.lg" py={8} bg="leaf.50">
       {/* ページ上部に「新規登録」ボタン。クリックでモーダルを開き、毎回初期化 */}
       <Stack direction="row" justify="flex-end" mb={4}>
-        {" "}
         {/* 右上配置 */}
         <Button
           colorScheme="leaf" // テーマに合わせる

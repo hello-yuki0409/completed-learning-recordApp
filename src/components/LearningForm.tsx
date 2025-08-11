@@ -65,7 +65,6 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
       <Stack spacing={5}>
         {/* 学習内容（必須） */}
         <FormControl isInvalid={!!errors.records} isRequired>
-          {" "}
           <FormLabel>学習内容</FormLabel>
           <Input
             placeholder="学習内容"
@@ -75,11 +74,10 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
               validate: (v) => v.length > 0 || "内容の入力は必須です", // 空文字弾く
             })}
           />
-          <FormErrorMessage>{errors.records?.message}</FormErrorMessage>{" "}
+          <FormErrorMessage>{errors.records?.message}</FormErrorMessage>
         </FormControl>
         {/* 学習時間（必須・0以上） */}
         <FormControl isInvalid={!!errors.time} isRequired>
-          {" "}
           <FormLabel>学習時間（時間）</FormLabel>
           <Controller
             control={control}
@@ -115,7 +113,7 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
               </NumberInput>
             )}
           />
-          <FormErrorMessage>{errors.time?.message}</FormErrorMessage>{" "}
+          <FormErrorMessage>{errors.time?.message}</FormErrorMessage>
         </FormControl>
 
         <FormControl>

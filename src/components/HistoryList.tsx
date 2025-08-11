@@ -42,7 +42,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
           <ListItem key={record.id}>
             <HStack justify="space-between" align="center">
               <Text fontSize="sm">
-                学習内容: {record.records}　学習時間: {record.time} 時間　備考:{" "}
+                学習内容: {record.records}　学習時間: {record.time} 時間　備考:
                 {record.remark ?? "—"}
               </Text>
               <Button
