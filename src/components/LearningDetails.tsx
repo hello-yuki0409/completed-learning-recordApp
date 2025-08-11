@@ -4,7 +4,6 @@ export type LearningDetailsProps = {
   records: string;
   time: number;
   remark?: string;
-  error?: string;
   totalStudyTime: number;
   currentGoal: number;
   baseGoal: number;
@@ -14,7 +13,6 @@ export const LearningDetails = ({
   records,
   time,
   remark,
-  error,
   totalStudyTime,
   currentGoal,
   baseGoal,
@@ -40,7 +38,6 @@ export const LearningDetails = ({
           入力されている時間：{displayTime ? `${displayTime} 時間` : "—"}
         </Text>
         <Text>備考：{remark ?? "—"}</Text>
-        {error && <Text color="red.500">{error}</Text>}
 
         <Text mt={2}>
           合計学習時間：
