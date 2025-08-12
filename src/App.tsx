@@ -21,17 +21,18 @@ import {
   LearningForm,
   type LearningFormValues,
 } from "./components/LearningForm";
-import { HistoryList, type HistoryRecord } from "./components/HistoryList";
+import { HistoryList } from "./components/HistoryList";
 import { LearningDetails } from "./components/LearningDetails";
 import { getAllHistory, addHistory, deleteHistory } from "./supabaseFunction";
 import { useToast } from "@chakra-ui/react";
+import { Record as LearningRecord } from "./domain/record";
 
 export default function App() {
   const [records, setRecords] = useState<string>("");
   const [time, setTime] = useState<number>(NaN);
   const [remark, setRemark] = useState<string>("");
 
-  const [historyRecords, setHistoryRecordss] = useState<HistoryRecord[]>([]);
+  const [historyRecords, setHistoryRecordss] = useState<LearningRecord[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); //データ読み込み中かどうか
 
   const { isOpen, onOpen, onClose } = useDisclosure(); // モーダル制御
@@ -49,7 +50,7 @@ export default function App() {
   const fetchTodos = async () => {
     setIsLoading(true); // 読み込み開始時
     // getAllHistory の戻り値が型定義されていない場合に備えて as で明示
-    const items = (await getAllHistory()) as HistoryRecord[];
+    const items = await getAllHistory();
     setHistoryRecordss(items);
     setIsLoading(false); // 読み込み完了で Loading 消す
   };
@@ -82,7 +83,7 @@ export default function App() {
   };
 
   // 登録後の削除処理を追加
-  const handleDelete = async (id: HistoryRecord["id"]) => {
+  const handleDelete = async (id: string) => {
     setIsLoading(true);
     // Supabase の削除関数を呼び出し、該当IDのデータを削除
     const result = await deleteHistory(id);
@@ -166,10 +167,9 @@ export default function App() {
         {/* 閉じるときも初期化 */}
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>新規登録</ModalHeader> {/* タイトル要件 */}
+          <ModalHeader>新規登録</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* 本文にフォームを入れる */}
             {/* RHF版のフォーム（成功時に登録 -> 成功なら閉じる） */}
             <LearningForm
               formId={FORM_ID}
