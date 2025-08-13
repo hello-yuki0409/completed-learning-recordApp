@@ -128,7 +128,6 @@ export default function App() {
           新規登録
         </Button>
       </Stack>
-
       <SimpleGrid columns={{ base: 1, md: 1 }} spacing={6}>
         <HistoryList
           history={historyRecords}
@@ -138,7 +137,6 @@ export default function App() {
           baseGoal={baseGoal}
         />
       </SimpleGrid>
-
       {/* 登録モーダル本体 */}
       <Modal
         isOpen={isOpen}
