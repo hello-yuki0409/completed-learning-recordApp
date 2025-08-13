@@ -49,7 +49,7 @@ export const LearningDetails = ({
 
         {totalStudyTime >= baseGoal && (
           <Text color="leaf.700" mt={1}>
-            よし！次の目標は {currentGoal} 時間だ🔥（定量目標）
+            よし！次の目標は {currentGoal} 時間だ🔥
           </Text>
         )}
       </Stack>

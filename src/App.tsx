@@ -22,16 +22,11 @@ import {
   type LearningFormValues,
 } from "./components/LearningForm";
 import { HistoryList } from "./components/HistoryList";
-import { LearningDetails } from "./components/LearningDetails";
 import { getAllHistory, addHistory, deleteHistory } from "./supabaseFunction";
 import { useToast } from "@chakra-ui/react";
 import { Record as LearningRecord } from "./domain/record";
 
 export default function App() {
-  const [records, setRecords] = useState<string>("");
-  const [time, setTime] = useState<number>(NaN);
-  const [remark, setRemark] = useState<string>("");
-
   const [historyRecords, setHistoryRecordss] = useState<LearningRecord[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); //データ読み込み中かどうか
 
@@ -39,17 +34,10 @@ export default function App() {
 
   const toast = useToast();
 
-  // 入力ステートを初期化する関数（再オープン時に残さないため）
-  const resetFormState = () => {
-    // フォーム初期化
-    setRecords("");
-    setTime(NaN); //  未入力表現としてNaNに戻す
-    setRemark("");
-  };
+  const resetFormState = () => {}; // ダミー関数（呼び出し箇所はそのまま残すため）
 
   const fetchTodos = async () => {
-    setIsLoading(true); // 読み込み開始時
-    // getAllHistory の戻り値が型定義されていない場合に備えて as で明示
+    setIsLoading(true);
     const items = await getAllHistory();
     setHistoryRecordss(items);
     setIsLoading(false); // 読み込み完了で Loading 消す
@@ -141,19 +129,14 @@ export default function App() {
         </Button>
       </Stack>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        {/* 学習フォームはモーダル内へ移動するので、ここからは一旦削除 */}
-        {/* // 削除: <LearningForm ... /> はモーダル内に移設 */}
-
-        <LearningDetails
-          records={records}
-          time={time}
-          remark={remark}
+      <SimpleGrid columns={{ base: 1, md: 1 }} spacing={6}>
+        <HistoryList
+          history={historyRecords}
+          onClickDelete={handleDelete}
           totalStudyTime={totalStudyTime}
           currentGoal={currentGoal}
           baseGoal={baseGoal}
         />
-        <HistoryList history={historyRecords} onClickDelete={handleDelete} />
       </SimpleGrid>
 
       {/* 登録モーダル本体 */}
