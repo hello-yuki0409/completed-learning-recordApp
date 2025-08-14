@@ -9,6 +9,7 @@ jest.mock("./supabaseFunction", () => ({
   getAllHistory: jest.fn().mockResolvedValue([
     { id: "1", title: "勉強A", time: "2", remark: "" },
     { id: "2", title: "勉強B", time: "1.5", remark: "メモ" },
+    { id: "3", title: "勉強C", time: "10", remark: "" },
   ]),
   addHistory: jest
     .fn()
@@ -31,8 +32,8 @@ test("初期表示：ローディングが出て、取得完了で消え、履�
   const rowB = await screen.findByText(/勉強B/);
   expect(rowB).toHaveTextContent(/学習時間:\s*1\.5\s*時間/);
 
-  // 合計バッジ 3.5
+  // 合計バッジ 13.5
   expect(
-    screen.getByText((_, el) => el?.textContent === "3.5")
+    screen.getByText((_, el) => el?.textContent === "13.5")
   ).toBeInTheDocument();
 });
