@@ -40,34 +40,41 @@ export const HistoryList: React.FC<HistoryListProps> = ({
       <Heading size="md" mb={4} color="leaf.700">
         登録履歴
       </Heading>
-      <List spacing={3}>
-        {history.map((record) => (
-          <ListItem key={record.id}>
-            <HStack justify="space-between" align="center">
-              <Text fontSize="sm">
-                {/* records -> title / timeはstring / remarkは空文字の可能性 */}
-                学習内容: {record.title}　学習時間: {record.time} 時間　備考:{" "}
-                {record.remark || "—"}
-              </Text>
-              <Button
-                variant="outline"
-                colorScheme="red"
-                size="sm"
-                onClick={() => onClickDelete(record.id)} // idはstring
-              >
-                削除
-              </Button>
-            </HStack>
-          </ListItem>
-        ))}
-      </List>
-      {/* 追加: カード下部に合計学習時間の表示を移設 */}
-      <Divider my={4} /> {/* 追加: 区切り線 */}
+      {/* 履歴が空のときの文言を表示 */}
+      {history.length === 0 ? (
+        <Text color="gray.500" fontSize="sm" data-testid="empty-message">
+          履歴がありません
+        </Text>
+      ) : (
+        <List spacing={3}>
+          {history.map((record) => (
+            <ListItem key={record.id}>
+              <HStack justify="space-between" align="center">
+                <Text fontSize="sm">
+                  {/* records -> title / timeはstring / remarkは空文字の可能性 */}
+                  学習内容: {record.title}　学習時間: {record.time} 時間　備考:
+                  {record.remark || "—"}
+                </Text>
+                <Button
+                  variant="outline"
+                  colorScheme="red"
+                  size="sm"
+                  onClick={() => onClickDelete(record.id)} // idはstring
+                >
+                  削除
+                </Button>
+              </HStack>
+            </ListItem>
+          ))}
+        </List>
+      )}
+      {/* カード下部に合計学習時間の表示を移設 */}
+      <Divider my={4} /> {/* 区切り線 */}
       <Text>
         合計学習時間：
         <Badge colorScheme="leaf" px={2} py={1} rounded="md">
           {totalStudyTime}
-        </Badge>{" "}
+        </Badge>
         / {currentGoal} 時間
       </Text>
       {totalStudyTime >= baseGoal && (
