@@ -3,9 +3,9 @@ import {
   screen,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
-import App from "./App";
+import App from "../App";
 
-jest.mock("./supabaseFunction", () => ({
+jest.mock("../supabaseFunction", () => ({
   getAllHistory: jest.fn().mockResolvedValue([]),
   addHistory: jest.fn(),
   deleteHistory: jest.fn(),

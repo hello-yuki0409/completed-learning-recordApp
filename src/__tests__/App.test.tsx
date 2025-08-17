@@ -3,9 +3,9 @@ import {
   screen,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
-import App from "./App";
+import App from "../App";
 
-jest.mock("./supabaseFunction", () => ({
+jest.mock("../supabaseFunction", () => ({
   getAllHistory: jest.fn().mockResolvedValue([
     { id: "1", title: "勉強A", time: "2", remark: "" },
     { id: "2", title: "勉強B", time: "1.5", remark: "メモ" },
