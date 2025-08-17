@@ -10,7 +10,7 @@ import {
   FormErrorMessage, //（エラー表示）
 } from "@chakra-ui/react";
 
-import { useForm, Controller } from "react-hook-form"; // （RHF）
+import { useForm, Controller } from "react-hook-form";
 
 // 送信値の型
 export type LearningFormValues = {
@@ -31,8 +31,8 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
     handleSubmit,
     register,
     control,
-    formState: { errors },
     reset,
+    formState: { errors },
   } = useForm<LearningFormValues>({
     mode: "onBlur", // フォーカスアウトで検証する
     defaultValues: { records: "", time: undefined, remark: "" },
