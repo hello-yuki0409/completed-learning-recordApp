@@ -15,7 +15,7 @@ import { useForm, Controller } from "react-hook-form"; // （RHF）
 // 送信値の型
 export type LearningFormValues = {
   records: string;
-  time: number;
+  time?: number;
   remark: string;
 };
 
@@ -34,17 +34,13 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
     formState: { errors },
     reset,
   } = useForm<LearningFormValues>({
-    mode: "onBlur", // フォーカスアウトで検証
-    defaultValues: {
-      records: "",
-      time: undefined as unknown as number,
-      remark: "",
-    },
+    mode: "onBlur", // フォーカスアウトで検証する
+    defaultValues: { records: "", time: undefined, remark: "" },
   });
 
   const onSubmit = async (values: LearningFormValues) => {
-    await onValidSubmit(values); // 成功時のみ親へ通知
-    reset(); // 成功後は初期化（再オープン時に残らない）
+    await onValidSubmit(values); // 成功時のみ親へ通知する
+    reset(); // 成功後は初期化
   };
 
   return (
@@ -70,7 +66,7 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
             placeholder="学習内容"
             {...register("records", {
               required: "内容の入力は必須です",
-              setValueAs: (v) => (typeof v === "string" ? v.trim() : v), // 空白のみ防止
+              setValueAs: (v) => (typeof v === "string" ? v.trim() : v), // 空白のみを防止
               validate: (v) => v.length > 0 || "内容の入力は必須です", // 空文字弾く
             })}
           />

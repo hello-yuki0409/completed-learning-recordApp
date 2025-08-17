@@ -53,7 +53,7 @@ export default function App() {
   ): Promise<boolean> => {
     const { records, time, remark } = values;
     setIsLoading(true);
-    const result = await addHistory(records, time, remark);
+    const result = await addHistory(records, time!, remark); // RHFで必須検証済みなので non-null で渡す
     if (result !== undefined) {
       await fetchTodos();
       resetFormState();
