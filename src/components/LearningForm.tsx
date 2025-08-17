@@ -7,10 +7,10 @@ import {
   Input,
   NumberInput,
   NumberInputField,
+  FormErrorMessage, //（エラー表示）
 } from "@chakra-ui/react";
 
 import { useForm, Controller } from "react-hook-form"; // （RHF）
-import { FormErrorMessage } from "@chakra-ui/react"; //（エラー表示）
 
 // 送信値の型
 export type LearningFormValues = {
