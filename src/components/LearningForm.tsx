@@ -92,7 +92,7 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
                 ) {
                   return "時間の入力は必須です"; // NaN/未入力も弾く
                 }
-                if (value < 0) return "時間は0以上である必要があります";
+                if (value === 0) return "時間は0以上である必要があります";
                 return true;
               },
             }}
