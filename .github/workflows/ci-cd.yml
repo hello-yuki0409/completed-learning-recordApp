@@ -3,6 +3,7 @@ name: CI/CD (Sandbox)
 permissions:
   contents: read
   pull-requests: write
+  checks: write # ← 追加（Check Run 作成に必要）
   id-token: write
 
 on:
@@ -52,6 +53,9 @@ jobs:
       github.event_name == 'pull_request' ||
       (github.event_name == 'push' && github.ref != 'refs/heads/main')
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -61,10 +65,12 @@ jobs:
       - name: Deploy to Firebase Hosting (preview)
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          repoToken: ${{ secrets.GITHUB_TOKEN }} # Check Run/コメント用
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: completed-learning-recordapp
-          channelId: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || format('branch-{0}', github.ref_name) }}
+          channelId: ${{ github.event_name == 'pull_request'
+            && format('pr-{0}', github.event.number)
+            || format('branch-{0}', github.ref_name) }}
           expires: 7d
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
