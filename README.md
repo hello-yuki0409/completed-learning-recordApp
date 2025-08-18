@@ -2,7 +2,7 @@
 
 ## 1. サンドボックスで作業
 ### 新しい作業ブランチを切る
-```
+```bash
 git switch -c feature/my-change
 # コード修正
 # (例: src/App.tsx を編集)
@@ -12,7 +12,7 @@ npm run dev
 ```
 
 ## 2. サンドボックスの GitHub に push（プレビュー確認用）
-```
+```bash
 git add .
 git commit -m "feat: xxx"
 git push origin feature/my-change
@@ -21,7 +21,7 @@ git push origin feature/my-change
 👉 PR ボタンが出るので確認。
 
 ## 3. 本番リポジトリにブランチを push
-```
+```bash
 # prod リモートへも同じブランチを push
 git push prod feature/my-change
 ```
@@ -45,7 +45,7 @@ GitHub Actions が `deploy_production` を実行
 
 ## 6. 最終確認
 本番URL（例: https://completed-learning-recordapp.web.app）を開いて反映確認
-```
+```bash
 ローカルを整理
 git switch main
 git pull origin main
