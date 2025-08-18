@@ -1,9 +1,9 @@
-name: CI/CD (Sandbox)
+name: CI/CD (Production)
 
 permissions:
   contents: read
   pull-requests: write
-  checks: write # ← 追加（Check Run 作成に必要）
+  checks: write
   id-token: write
 
 on:
@@ -65,12 +65,42 @@ jobs:
       - name: Deploy to Firebase Hosting (preview)
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }} # Check Run/コメント用
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: completed-learning-recordapp
           channelId: ${{ github.event_name == 'pull_request'
             && format('pr-{0}', github.event.number)
             || format('branch-{0}', github.ref_name) }}
           expires: 7d
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+
+  deploy_production:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.repository == 'hello-yuki0409/completed-learning-recordApp'
+    environment:
+      name: production
+      url: https://completed-learning-recordapp.web.app
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist
+
+      - name: Deploy to Firebase Hosting (live)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: completed-learning-recordapp
+          channelId: live
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
