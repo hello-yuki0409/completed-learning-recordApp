@@ -3,6 +3,7 @@ name: CI/CD (Production)
 permissions:
   contents: read
   pull-requests: write
+  checks: write
   id-token: write
 
 on:
@@ -67,7 +68,9 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: completed-learning-recordapp
-          channelId: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || format('branch-{0}', github.ref_name) }}
+          channelId: ${{ github.event_name == 'pull_request'
+            && format('pr-{0}', github.event.number)
+            || format('branch-{0}', github.ref_name) }}
           expires: 7d
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
@@ -81,7 +84,7 @@ jobs:
       github.repository == 'hello-yuki0409/completed-learning-recordApp'
     environment:
       name: production
-      url: https://<本番のHostingドメイン> # ←Firebase Hosting の本番公開URL（例: https://completed-learning-recordapp.web.app またはカスタムドメインを設定している場合はそのドメイン）
+      url: https://completed-learning-recordapp.web.app
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
