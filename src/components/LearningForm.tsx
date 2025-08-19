@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Box,
   Heading,
@@ -23,10 +24,17 @@ export type LearningFormValues = {
 export type LearningFormProps = {
   formId: string; // モーダルフッターのsubmitボタンと紐づけ
   onValidSubmit: (values: LearningFormValues) => void | Promise<void>;
+  initialValues?: Partial<LearningFormValues>;
+  mode?: "create" | "edit";
 };
 
 // RHF版コンポーネント
-export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
+export const LearningForm = ({
+  formId,
+  onValidSubmit,
+  initialValues,
+  mode = "create",
+}: LearningFormProps) => {
   const {
     handleSubmit,
     register,
@@ -37,6 +45,17 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
     mode: "onBlur", // フォーカスアウトで検証する
     defaultValues: { records: "", time: undefined, remark: "" },
   });
+
+  // 親から渡された初期値をその都度反映する処理
+  useEffect(() => {
+    if (initialValues) {
+      reset({
+        records: initialValues.records ?? "",
+        time: initialValues.time,
+        remark: initialValues.remark ?? "",
+      });
+    }
+  }, [initialValues, reset]);
 
   const onSubmit = async (values: LearningFormValues) => {
     await onValidSubmit(values); // 成功時のみ親へ通知する
@@ -55,9 +74,10 @@ export const LearningForm = ({ formId, onValidSubmit }: LearningFormProps) => {
       border="1px"
       borderColor="blackAlpha.100"
     >
-      <Heading size="md" mb={4} color="leaf.700">
-        学習時間記録
+      <Heading size="md" mb={4} color="leaf.700" data-testid="form-title">
+        {mode === "edit" ? "記録編集" : "学習時間記録"}
       </Heading>
+
       <Stack spacing={5}>
         {/* 学習内容（必須） */}
         <FormControl isInvalid={!!errors.records} isRequired>

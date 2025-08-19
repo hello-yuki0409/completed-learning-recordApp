@@ -16,6 +16,7 @@ import type { Record as LearningRecord } from "../domain/record";
 export type HistoryListProps = {
   history: LearningRecord[]; // ドメインクラス配列
   onClickDelete: (id: string) => void | Promise<void>;
+  onClickEdit: (rec: LearningRecord) => void;
   totalStudyTime: number; // 合計学習時間
   currentGoal: number; // 現在の目標
   baseGoal: number; // 基準目標（1000）
@@ -24,6 +25,7 @@ export type HistoryListProps = {
 export const HistoryList: React.FC<HistoryListProps> = ({
   history,
   onClickDelete,
+  onClickEdit,
   totalStudyTime,
   currentGoal,
   baseGoal,
@@ -57,6 +59,14 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 </Text>
                 <Button
                   variant="outline"
+                  colorScheme="leaf"
+                  size="sm"
+                  onClick={() => onClickEdit(record)} // 押したレコードを渡す
+                >
+                  編集
+                </Button>
+                <Button
+                  variant="outline"
                   colorScheme="red"
                   size="sm"
                   onClick={() => onClickDelete(record.id)} // idはstring
@@ -79,7 +89,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
       </Text>
       {totalStudyTime >= baseGoal && (
         <Text color="leaf.700" mt={1}>
-          よし！次の目標は {currentGoal} 時間だ🔥（定量目標）
+          よし！次の目標は {currentGoal} 時間だ🔥
         </Text>
       )}
     </Box>
