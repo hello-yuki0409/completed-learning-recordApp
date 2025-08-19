@@ -2,7 +2,7 @@ import { supabase } from "./supabaseClient";
 import { Record as LearningRecord } from "./domain/record";
 
 type StudyRecordRow = {
-  id: number; // DB実型に合わせる
+  id: string; // DB実型に合わせる
   records: string; // DBカラム: records（表示では title に読み替え）
   time: number; // DBは数値想定 -> クラスでは string に変換して保持
   remark: string | null; // null 許容
@@ -10,7 +10,7 @@ type StudyRecordRow = {
 
 const toLearningRecord = (row: StudyRecordRow): LearningRecord => {
   return new LearningRecord(
-    String(row.id), // id は string に統一
+    row.id, // id は string に統一
     row.records, // records -> title（クラスのプロパティ名）
     String(row.time),
     row.remark ?? "" // null を空文字へ寄せる
@@ -22,7 +22,7 @@ export async function getAllHistory(): Promise<LearningRecord[]> {
     .from("study-record")
     .select("id, records, time, remark");
   if (error || !data) {
-    console.error("学習履歴の取得に失敗しました:", error);
+    console.error("取得に失敗しました:", error);
     return []; // 失敗時は空配列を返す（UI側で空として扱える）
   }
 
@@ -41,7 +41,7 @@ export async function addHistory(
     .single(); // 1件だけ返す
 
   if (error || !data) {
-    console.error("学習履歴の追加に失敗しました:", error);
+    console.error("追加に失敗しました:", error);
     return undefined;
   }
 
@@ -56,4 +56,27 @@ export async function deleteHistory(id: string): Promise<boolean> {
     return false;
   }
   return true;
+}
+
+// 編集機能
+export async function updateHistory(
+  id: string,
+  records: string,
+  time: number,
+  remark: string
+): Promise<LearningRecord | undefined> {
+  const { data, error } = await supabase
+    .from("study-record")
+    .update({ records, time, remark })
+    .eq("id", id)
+    .select("id, records, time, remark")
+    .single();
+
+  if (error || !data) {
+    console.error("学習履歴の更新に失敗しました:", error);
+    return undefined;
+  }
+
+  const row = data as StudyRecordRow;
+  return toLearningRecord(row);
 }

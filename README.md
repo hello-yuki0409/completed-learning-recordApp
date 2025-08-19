@@ -1,69 +1,55 @@
-# React + TypeScript + Vite
+# サンドボックス → 本番 デプロイ フロー
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 1. サンドボックスで作業
+### 新しい作業ブランチを切る
+```bash
+git switch -c feature/my-change
+# コード修正
+# (例: src/App.tsx を編集)
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 動作確認
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 2. サンドボックスの GitHub に push（プレビュー確認用）
+```bash
+git add .
+git commit -m "feat: xxx"
+git push origin feature/my-change
+```
+👉 サンドボックスの GitHub Actions が走り、Preview URL が発行される。
+👉 PR ボタンが出るので確認。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 3. 本番リポジトリにブランチを push
+```bash
+# prod リモートへも同じブランチを push
+git push prod feature/my-change
+```
+👉 本番リポジトリにブランチが作られる。
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 4. GitHub 上で本番リポジトリに PR を作成
+
+`feature/my-change` → `main` の Pull Request を作成
+
+必要なら **レビュー/承認** を行う
+
+## 5. マージ & デプロイ
+
+PR を main にマージ
+
+GitHub Actions が `deploy_production` を実行
+
+`Actions` タブで「Review deployments」→ Approve and deploy を押す
+
+👉 Firebase Hosting に本番デプロイされる
+
+## 6. 最終確認
+本番URL（例: https://completed-learning-recordapp.web.app）を開いて反映確認
+```bash
+ローカルを整理
+git switch main
+git pull origin main
+git branch -d feature/my-change
+git push origin --delete feature/my-change
+git push prod   --delete feature/my-change
 ```

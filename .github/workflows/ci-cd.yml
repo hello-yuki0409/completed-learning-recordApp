@@ -1,4 +1,4 @@
-name: CI/CD (Production)
+name: CI/CD (Sandbox)
 
 permissions:
   contents: read
@@ -21,24 +21,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
-
       - name: Install
         run: npm ci
-
       - name: Test
         run: npm test -- --ci
-
       - name: Build
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -55,13 +50,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: web-dist
           path: dist
-
       - name: Deploy to Firebase Hosting (preview)
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -72,35 +65,5 @@ jobs:
             && format('pr-{0}', github.event.number)
             || format('branch-{0}', github.ref_name) }}
           expires: 7d
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-
-  deploy_production:
-    needs: build_and_test
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      github.repository == 'hello-yuki0409/completed-learning-recordApp'
-    environment:
-      name: production
-      url: https://completed-learning-recordapp.web.app
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: web-dist
-          path: dist
-
-      - name: Deploy to Firebase Hosting (live)
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: completed-learning-recordapp
-          channelId: live
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks

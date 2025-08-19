@@ -22,19 +22,27 @@ import {
   type LearningFormValues,
 } from "./components/LearningForm";
 import { HistoryList } from "./components/HistoryList";
-import { getAllHistory, addHistory, deleteHistory } from "./supabaseFunction";
+import {
+  getAllHistory,
+  addHistory,
+  deleteHistory,
+  updateHistory,
+} from "./supabaseFunction";
 import { useToast } from "@chakra-ui/react";
 import { Record as LearningRecord } from "./domain/record";
 
 export default function App() {
   const [historyRecords, setHistoryRecordss] = useState<LearningRecord[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); //データ読み込み中かどうか
+  const [editing, setEditing] = useState<LearningRecord | null>(null); // null = 新規
 
   const { isOpen, onOpen, onClose } = useDisclosure(); // モーダル制御
 
   const toast = useToast();
 
-  const resetFormState = () => {}; // ダミー関数（呼び出し箇所はそのまま残すため）
+  const resetFormState = () => {
+    setEditing(null);
+  }; // LearningForm 側が submit 成功時に reset 済みなので、編集対象だけ初期化
 
   const fetchTodos = async () => {
     setIsLoading(true);
@@ -65,6 +73,29 @@ export default function App() {
         title: "登録に失敗しました",
         description: "しばらくしてから再度お試しください。",
       }); // APIエラーはトースト通知
+      setIsLoading(false);
+      return false;
+    }
+  };
+
+  const updateRecordCore = async (
+    id: string,
+    values: LearningFormValues
+  ): Promise<boolean> => {
+    const { records, time, remark } = values;
+    setIsLoading(true);
+    const result = await updateHistory(id, records, time!, remark);
+    if (result !== undefined) {
+      await fetchTodos();
+      resetFormState();
+      setIsLoading(false);
+      return true;
+    } else {
+      toast({
+        status: "error",
+        title: "更新に失敗しました",
+        description: "しばらくしてから再度お試しください。",
+      });
       setIsLoading(false);
       return false;
     }
@@ -119,7 +150,7 @@ export default function App() {
       <Stack direction="row" justify="flex-end" mb={4}>
         {/* 右上配置 */}
         <Button
-          colorScheme="leaf" // テーマに合わせる
+          colorScheme="leaf"
           onClick={() => {
             resetFormState();
             onOpen();
@@ -135,6 +166,10 @@ export default function App() {
           totalStudyTime={totalStudyTime}
           currentGoal={currentGoal}
           baseGoal={baseGoal}
+          onClickEdit={(rec) => {
+            setEditing(rec); // 編集対象セット
+            onOpen();
+          }}
         />
       </SimpleGrid>
       {/* 登録モーダル本体 */}
@@ -148,16 +183,28 @@ export default function App() {
         {/* 閉じるときも初期化 */}
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>新規登録</ModalHeader>
+          <ModalHeader>{editing ? "記録の編集" : "新規登録"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {/* RHF版のフォーム（成功時に登録 -> 成功なら閉じる） */}
             <LearningForm
               formId={FORM_ID}
+              mode={editing ? "edit" : "create"}
+              initialValues={
+                editing
+                  ? {
+                      records: editing.title,
+                      time: Number(editing.time),
+                      remark: editing.remark ?? "",
+                    }
+                  : { records: "", time: undefined, remark: "" }
+              }
               onValidSubmit={async (values) => {
                 // RHFの値を親で登録処理に渡す
-                const ok = await addRecordCore(values);
-                if (ok) onClose();
+                const ok = editing
+                  ? await updateRecordCore(editing.id, values)
+                  : await addRecordCore(values);
+                if (ok) onClose(); // 閉じると一覧更新済み
               }}
             />
           </ModalBody>
@@ -178,7 +225,7 @@ export default function App() {
               type="submit"
               isLoading={isLoading}
             >
-              登録
+              {editing ? "保存" : "登録"}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -186,5 +233,3 @@ export default function App() {
     </Container>
   );
 }
-// テスト.text
-// test
