@@ -11,18 +11,19 @@ jest.mock("../supabaseFunction", () => ({
     { id: "1", title: "勉強A", time: "2", remark: "" },
     { id: "2", title: "勉強B", time: "1", remark: "メモ" },
   ]),
+  // 編集で保存に成功したら、以下の1件が返ってくることにする
   updateHistory: jest.fn().mockResolvedValue({
     id: "2",
     title: "勉強B改",
     time: "3",
     remark: "更新",
   }),
-  addHistory: jest.fn(),
-  deleteHistory: jest.fn(),
+  addHistory: jest.fn(), // 今回のテストでは使わないが、存在だけ用意
+  deleteHistory: jest.fn(), // 同上
 }));
 
-test("編集→保存で該当行のみ更新され、順序は維持される", async () => {
-  const api = require("../supabaseFunction");
+test("編集 -> 保存で該当行のみ更新され、順序は維持される", async () => {
+  const api = require("../supabaseFunction"); // mock の取り出し
 
   render(<App />);
   await waitForElementToBeRemoved(() => screen.getByText(/now loading/i));
