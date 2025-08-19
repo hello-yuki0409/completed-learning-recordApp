@@ -86,7 +86,7 @@ export default function App() {
     setIsLoading(true);
     const result = await updateHistory(id, records, time!, remark);
     if (result !== undefined) {
-      await fetchTodos();
+      setHistoryRecordss((prev) => prev.map((r) => (r.id === id ? result : r)));
       resetFormState();
       setIsLoading(false);
       return true;
