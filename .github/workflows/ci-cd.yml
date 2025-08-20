@@ -77,7 +77,7 @@ jobs:
       github.repository == 'hello-yuki0409/completed-learning-recordApp'
     environment:
       name: production
-      # url: https://completed-learning-recordapp.web.app  # （表示用。任意）
+      url: https://completed-learning-recordapp.web.app
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
