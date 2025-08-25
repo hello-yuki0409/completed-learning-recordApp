@@ -53,26 +53,30 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             <ListItem key={record.id}>
               <HStack justify="space-between" align="center">
                 <Text fontSize="sm">
-                  {/* records -> title / timeはstring / remarkは空文字の可能性 */}
-                  学習内容: {record.title}　学習時間: {record.time} 時間　備考:
-                  {record.remark || "—"}
+                  学習内容: {record.title}
+                  <br />
+                  学習時間: {record.time} 時間
+                  <br />
+                  備考: {record.remark || "—"}
                 </Text>
-                <Button
-                  variant="outline"
-                  colorScheme="leaf"
-                  size="sm"
-                  onClick={() => onClickEdit(record)} // 押したレコードを渡す
-                >
-                  編集
-                </Button>
-                <Button
-                  variant="outline"
-                  colorScheme="red"
-                  size="sm"
-                  onClick={() => onClickDelete(record.id)} // idはstring
-                >
-                  削除
-                </Button>
+                <HStack spacing={2}>
+                  <Button
+                    variant="outline"
+                    colorScheme="leaf"
+                    size="sm"
+                    onClick={() => onClickEdit(record)}
+                  >
+                    編集
+                  </Button>
+                  <Button
+                    variant="outline"
+                    colorScheme="red"
+                    size="sm"
+                    onClick={() => onClickDelete(record.id)}
+                  >
+                    削除
+                  </Button>
+                </HStack>
               </HStack>
             </ListItem>
           ))}
