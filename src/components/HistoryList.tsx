@@ -9,7 +9,7 @@ import {
   Badge,
   Divider,
 } from "@chakra-ui/react";
-import React from "react";
+import { memo } from "react";
 import type { Record as LearningRecord } from "../domain/record";
 
 // props をクラス前提に
@@ -22,80 +22,92 @@ export type HistoryListProps = {
   baseGoal: number; // 基準目標（1000）
 };
 
-export const HistoryList: React.FC<HistoryListProps> = ({
-  history,
-  onClickDelete,
-  onClickEdit,
-  totalStudyTime,
-  currentGoal,
-  baseGoal,
-}) => {
-  return (
-    <Box
-      bg="white"
-      p={6}
-      rounded="2xl"
-      boxShadow="sm"
-      border="1px"
-      borderColor="blackAlpha.100"
-    >
-      <Heading size="md" mb={4} color="leaf.700">
-        登録履歴
-      </Heading>
-      {/* 履歴が空のときの文言を表示 */}
-      {history.length === 0 ? (
-        <Text color="gray.500" fontSize="sm" data-testid="empty-message">
-          履歴がありません
-        </Text>
-      ) : (
-        <List spacing={3}>
-          {history.map((record) => (
-            <ListItem key={record.id}>
-              <HStack justify="space-between" align="center">
-                <Text fontSize="sm">
-                  学習内容: {record.title}
-                  <br />
-                  学習時間: {record.time} 時間
-                  <br />
-                  備考: {record.remark || "—"}
-                </Text>
-                <HStack spacing={2}>
-                  <Button
-                    variant="outline"
-                    colorScheme="leaf"
-                    size="sm"
-                    onClick={() => onClickEdit(record)}
-                  >
-                    編集
-                  </Button>
-                  <Button
-                    variant="outline"
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => onClickDelete(record.id)}
-                  >
-                    削除
-                  </Button>
+export const HistoryList = memo(
+  function HistoryList({
+    history,
+    onClickDelete,
+    onClickEdit,
+    totalStudyTime,
+    currentGoal,
+    baseGoal,
+  }: HistoryListProps) {
+    return (
+      <Box
+        bg="white"
+        p={6}
+        rounded="2xl"
+        boxShadow="sm"
+        border="1px"
+        borderColor="blackAlpha.100"
+      >
+        <Heading size="md" mb={4} color="leaf.700">
+          登録履歴
+        </Heading>
+        {/* 履歴が空のときの文言を表示 */}
+        {history.length === 0 ? (
+          <Text color="gray.500" fontSize="sm" data-testid="empty-message">
+            履歴がありません
+          </Text>
+        ) : (
+          <List spacing={3}>
+            {history.map((record) => (
+              <ListItem key={record.id}>
+                <HStack justify="space-between" align="center">
+                  <Text fontSize="sm">
+                    学習内容: {record.title}
+                    <br />
+                    学習時間: {record.time} 時間
+                    <br />
+                    備考: {record.remark || "—"}
+                  </Text>
+                  <HStack spacing={2}>
+                    <Button
+                      variant="outline"
+                      colorScheme="leaf"
+                      size="sm"
+                      onClick={() => onClickEdit(record)}
+                    >
+                      編集
+                    </Button>
+                    <Button
+                      variant="outline"
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => onClickDelete(record.id)}
+                    >
+                      削除
+                    </Button>
+                  </HStack>
                 </HStack>
-              </HStack>
-            </ListItem>
-          ))}
-        </List>
-      )}
-      {/* カード下部に合計学習時間の表示を移設 */}
-      <Divider my={4} /> {/* 区切り線 */}
-      <Text>
-        合計学習時間：
-        <Badge colorScheme="leaf" px={2} py={1} rounded="md">
-          {totalStudyTime}
-        </Badge>
-        / {currentGoal} 時間
-      </Text>
-      {totalStudyTime >= baseGoal && (
-        <Text color="leaf.700" mt={1}>
-          よし！次の目標は {currentGoal} 時間だ🔥
+              </ListItem>
+            ))}
+          </List>
+        )}
+        {/* カード下部に合計学習時間の表示を移設 */}
+        <Divider my={4} /> {/* 区切り線 */}
+        <Text>
+          合計学習時間：
+          <Badge colorScheme="leaf" px={2} py={1} rounded="md">
+            {totalStudyTime}
+          </Badge>
+          / {currentGoal} 時間
         </Text>
-      )}
-    </Box>
-  );
-};
+        {totalStudyTime >= baseGoal && (
+          <Text color="leaf.700" mt={1}>
+            よし！次の目標は {currentGoal} 時間だ🔥
+          </Text>
+        )}
+      </Box>
+    );
+  },
+  (prev, next) => {
+    return (
+      prev.history === next.history &&
+      prev.onClickDelete === next.onClickDelete &&
+      prev.onClickEdit === next.onClickEdit &&
+      prev.totalStudyTime === next.totalStudyTime &&
+      prev.currentGoal === next.currentGoal &&
+      prev.baseGoal === next.baseGoal
+    );
+  }
+);

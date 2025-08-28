@@ -16,7 +16,7 @@ import {
   ModalFooter, // モーダルUI
 } from "@chakra-ui/react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   LearningForm,
   type LearningFormValues,
@@ -40,97 +40,118 @@ export default function App() {
 
   const toast = useToast();
 
-  const resetFormState = () => {
+  const resetFormState = useCallback(() => {
     setEditing(null);
-  }; // LearningForm 側が submit 成功時に reset 済みなので、編集対象だけ初期化
+  }, []); // 編集対象だけ初期化
 
-  const fetchTodos = async () => {
+  const fetchTodos = useCallback(async () => {
     setIsLoading(true);
     const items = await getAllHistory();
     setHistoryRecordss(items);
     setIsLoading(false); // 読み込み完了で Loading 消す
-  };
+  }, []);
 
   // useEffectの外でも fetchTodos を使えるようにする
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, [fetchTodos]);
 
-  const addRecordCore = async (
-    values: LearningFormValues
-  ): Promise<boolean> => {
-    const { records, time, remark } = values;
-    setIsLoading(true);
-    const result = await addHistory(records, time!, remark); // RHFで必須検証済みなので non-null で渡す
-    if (result !== undefined) {
-      await fetchTodos();
-      resetFormState();
-      setIsLoading(false);
-      return true;
-    } else {
-      toast({
-        status: "error",
-        title: "登録に失敗しました",
-        description: "しばらくしてから再度お試しください。",
-      }); // APIエラーはトースト通知
-      setIsLoading(false);
-      return false;
-    }
-  };
+  const addRecordCore = useCallback(
+    async (values: LearningFormValues): Promise<boolean> => {
+      const { records, time, remark } = values;
+      setIsLoading(true);
+      const result = await addHistory(records, time!, remark); // RHFで必須検証済みなので non-null で渡す
+      if (result !== undefined) {
+        await fetchTodos();
+        resetFormState();
+        setIsLoading(false);
+        return true;
+      } else {
+        toast({
+          status: "error",
+          title: "登録に失敗しました",
+          description: "しばらくしてから再度お試しください。",
+        }); // APIエラーはトースト通知
+        setIsLoading(false);
+        return false;
+      }
+    },
+    [fetchTodos, resetFormState, toast]
+  );
 
-  const updateRecordCore = async (
-    id: string,
-    values: LearningFormValues
-  ): Promise<boolean> => {
-    const { records, time, remark } = values;
-    setIsLoading(true);
-    const result = await updateHistory(id, records, time!, remark);
-    if (result !== undefined) {
-      setHistoryRecordss((prev) => prev.map((r) => (r.id === id ? result : r)));
-      resetFormState();
-      setIsLoading(false);
-      return true;
-    } else {
-      toast({
-        status: "error",
-        title: "更新に失敗しました",
-        description: "しばらくしてから再度お試しください。",
-      });
-      setIsLoading(false);
-      return false;
-    }
-  };
+  const updateRecordCore = useCallback(
+    async (id: string, values: LearningFormValues): Promise<boolean> => {
+      const { records, time, remark } = values;
+      setIsLoading(true);
+      const result = await updateHistory(id, records, time!, remark);
+      if (result !== undefined) {
+        setHistoryRecordss((prev) =>
+          prev.map((r) => (r.id === id ? result : r))
+        );
+        resetFormState();
+        setIsLoading(false);
+        return true;
+      } else {
+        toast({
+          status: "error",
+          title: "更新に失敗しました",
+          description: "しばらくしてから再度お試しください。",
+        });
+        setIsLoading(false);
+        return false;
+      }
+    },
+    [resetFormState, toast]
+  );
 
   // 登録後の削除処理を追加
-  const handleDelete = async (id: string) => {
-    setIsLoading(true);
-    // Supabase の削除関数を呼び出し、該当IDのデータを削除
-    const result = await deleteHistory(id);
-    // 削除が成功したら最新の履歴データを再取得して画面を更新する
-    if (result) {
-      await fetchTodos();
-    }
-    setIsLoading(false);
-  };
+  const handleDelete = useCallback(
+    async (id: string) => {
+      setIsLoading(true);
+      // Supabase の削除関数を呼び出し、該当IDのデータを削除
+      const result = await deleteHistory(id);
+      // 削除が成功したら最新の履歴データを再取得して画面を更新する
+      if (result) {
+        await fetchTodos();
+      }
+      setIsLoading(false);
+    },
+    [fetchTodos]
+  );
 
   // 学習時間を合計する処理
-  const totalStudyTime = historyRecords.reduce(
-    (sum, records) => sum + Number(records.time),
-    0
+  const totalStudyTime = useMemo(
+    () =>
+      historyRecords.reduce((sum, records) => sum + Number(records.time), 0),
+    [historyRecords]
   );
 
   // 目標時間を達成したら+500してエンドレス表示
   const baseGoal = 1000;
   const plusGoal = 500;
-  const goalCount =
-    totalStudyTime < baseGoal
-      ? 0
-      : Math.floor((totalStudyTime - baseGoal) / plusGoal) + 1;
+  const goalCount = useMemo(
+    () =>
+      totalStudyTime < baseGoal
+        ? 0
+        : Math.floor((totalStudyTime - baseGoal) / plusGoal) + 1,
+    [totalStudyTime]
+  );
 
   // 次の目標時間 ~勉強に終わりはない 産まれてから死ぬまで勉強~
-  const currentGoal = baseGoal + goalCount * plusGoal;
+  const currentGoal = useMemo(
+    () => baseGoal + goalCount * plusGoal,
+    [goalCount]
+  );
 
   const FORM_ID = "learning-form";
+
+  const handleEdit = useCallback(
+    (rec: LearningRecord) => {
+      setEditing(rec); // 編集対象セット
+      onOpen();
+    },
+    [onOpen]
+  );
 
   // Loading画面を表示する処理
   if (isLoading) {
@@ -166,10 +187,7 @@ export default function App() {
           totalStudyTime={totalStudyTime}
           currentGoal={currentGoal}
           baseGoal={baseGoal}
-          onClickEdit={(rec) => {
-            setEditing(rec); // 編集対象セット
-            onOpen();
-          }}
+          onClickEdit={handleEdit}
         />
       </SimpleGrid>
       {/* 登録モーダル本体 */}
@@ -186,7 +204,7 @@ export default function App() {
           <ModalHeader>{editing ? "記録の編集" : "新規登録"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* RHF版のフォーム（成功時に登録 -> 成功なら閉じる） */}
+            {/* 成功時に登録 -> 成功なら閉じる */}
             <LearningForm
               formId={FORM_ID}
               mode={editing ? "edit" : "create"}

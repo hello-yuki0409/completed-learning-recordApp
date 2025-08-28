@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -29,12 +29,12 @@ export type LearningFormProps = {
 };
 
 // RHF版コンポーネント
-export const LearningForm = ({
+export const LearningForm = memo(function LearningForm({
   formId,
   onValidSubmit,
   initialValues,
   mode = "create",
-}: LearningFormProps) => {
+}: LearningFormProps) {
   const {
     handleSubmit,
     register,
@@ -55,12 +55,15 @@ export const LearningForm = ({
         remark: initialValues.remark ?? "",
       });
     }
-  }, [initialValues, reset]);
+  }, [onValidSubmit, reset]);
 
-  const onSubmit = async (values: LearningFormValues) => {
-    await onValidSubmit(values); // 成功時のみ親へ通知する
-    reset(); // 成功後は初期化
-  };
+  const onSubmit = useCallback(
+    async (values: LearningFormValues) => {
+      await onValidSubmit(values); // 成功時のみ親へ通知する
+      reset(); // 成功後は初期化
+    },
+    [onValidSubmit, reset]
+  );
 
   return (
     <Box
@@ -139,4 +142,4 @@ export const LearningForm = ({
       </Stack>
     </Box>
   );
-};
+});
