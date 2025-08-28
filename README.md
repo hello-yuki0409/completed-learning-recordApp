@@ -19,6 +19,7 @@ React（Vite 環境）＋ Supabase を利用。
 
 - [React](https://react.dev/) (Vite)
 - [Jest](https://jestjs.io/) + [React Testing Library](https://testing-library.com/)
+- [React Hook Form](https://react-hook-form.com/) (バリデーション)
 - [Supabase](https://supabase.com/) (DB/API)
 - [Firebase Hosting](https://firebase.google.com/?hl=ja)（ホスティング・デプロイ）
 - [GitHub Actions](https://docs.github.com/ja/actions)（CI/CD）
