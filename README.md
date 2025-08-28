@@ -32,6 +32,7 @@ React（Vite 環境）＋ Supabase を利用。
 - **バックエンド**: Supabase（PostgreSQL/認証）
 - **デプロイ**: Firebase Hosting
 - **CI/CD**: GitHub Actions
+- バリデーション:　React Hook Form
 - **テスト**: Jest, React Testing Library
 - **パッケージ管理**: npm
 - **その他**: Makefile（手動デプロイ補助）
