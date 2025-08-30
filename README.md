@@ -1,6 +1,6 @@
 # 学習時間記録アプリ
 
-![2025-08-2522 40 22-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/e6d104cf-32ec-4e06-8037-4397167cd556)
+![2025-08-3017 05 40-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/f7005024-ab7b-4d6f-ad61-652d321a75b1)
 
 ## サービスの説明
 
