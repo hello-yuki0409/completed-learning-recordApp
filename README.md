@@ -32,7 +32,7 @@ React（Vite 環境）＋ Supabase を利用。
 - **バックエンド**: Supabase（PostgreSQL/認証）
 - **デプロイ**: Firebase Hosting
 - **CI/CD**: GitHub Actions
-- バリデーション:　React Hook Form
+- **バリデーション**:　React Hook Form
 - **テスト**: Jest, React Testing Library
 - **パッケージ管理**: npm
 - **その他**: Makefile（手動デプロイ補助）
@@ -111,7 +111,7 @@ Firebase Hosting に自動デプロイされます
 
 テーブル名 : study-record
 
-| カラム名  | 型      | デフォルト値        | 主キー | 説明              |
+| Name     | Type         | Default　Value   | 主キー | 説明              |
 | :-------- | :------ | :------------------ | :----: | :---------------- |
 | `id`      | uuid    | `gen_random_uuid()` |   ✅   | レコードの一意 ID |
 | `records` | varchar | `NULL`              |        | 学習内容          |
